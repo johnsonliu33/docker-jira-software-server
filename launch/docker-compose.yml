@@ -1,0 +1,43 @@
+version: '2'
+
+services:
+  jira-db:
+    image: postgres:9.6-alpine
+    container_name: jira-db
+    restart: always
+    environment:
+      - POSTGRES_USER=jira
+      - POSTGRES_PASSWORD=jira
+      - POSTGRES_INITDB_ARGS=--encoding=Unicode --locale=C 
+    networks:
+      - jira-tier
+    volumes:
+      - jira-db:/var/lib/postgresql/data
+
+  jira-app:
+    image: ewind/jira-software-server
+    container_name: jira-app
+    restart: always
+    networks:
+      - jira-tier
+    ports:
+      - 8080:8080
+    volumes:
+      - jira-data:/var/atlassian/application-data/jira
+    depends_on:
+      - jira-db
+    environment:
+      - CATALINA_CONNECTOR_PROXYNAME=jira.example.com
+      - CATALINA_CONNECTOR_PROXYPORT=443
+      - CATALINA_CONNECTOR_SCHEME=https
+      - CATALINA_CONNECTOR_SECURE=true
+
+volumes:
+  jira-db:
+    driver: local
+  jira-data:
+    driver: local
+
+networks:
+  jira-tier:
+    driver: bridge
