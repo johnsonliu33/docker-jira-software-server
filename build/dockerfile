@@ -1,5 +1,5 @@
 FROM openjdk:8-jre-alpine
-MAINTAINER Andrey Nikitin
+LABEL maintainer="Andrey Nikitin <andrey@nikitin.one>"
 
 ENV RUN_USER            daemon
 ENV RUN_GROUP           daemon
